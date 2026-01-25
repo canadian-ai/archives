@@ -34,9 +34,9 @@ export const metadata: Metadata = {
     siteName: 'Canadian AI Magazine Archives',
     images: [
       {
-        url: '/og-facebook.jpg',
-        width: 1200,
-        height: 630,
+        url: '/social.png',
+        width: 1024,
+        height: 512,
         alt: 'Canadian AI Magazine Archives - Explore decades of AI research',
       },
     ],
@@ -46,42 +46,13 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Canadian AI Magazine Archives | Explore the Archives',
     description: 'Discover decades of Canadian AI research and publications. Visit archives.canadian-ai.ca',
-    images: ['/og-twitter.jpg'],
+    images: ['/social.png'],
     creator: '@CanadianAI',
     site: '@CanadianAI',
   },
   icons: {
-    icon: [
-      {
-        url: '/favicon-192x192.png',
-        sizes: '192x192',
-        type: 'image/png',
-      },
-      {
-        url: '/favicon-512x512.png',
-        sizes: '512x512',
-        type: 'image/png',
-      },
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-touch-icon.png',
-    other: [
-      {
-        rel: 'apple-touch-icon',
-        url: '/apple-touch-icon.png',
-      },
-    ],
+    icon: '/logo.png',
+    apple: '/logo.png',
   },
 }
 
