@@ -25,13 +25,43 @@ export const metadata: Metadata = {
   keywords: ['Canadian AI', 'artificial intelligence', 'AI history', 'CAIAC', 'machine learning', 'neural networks', 'expert systems', '1980s AI'],
   authors: [{ name: 'Canadian Artificial Intelligence Association (CAIAC)' }],
   generator: 'v0.app',
+  metadataBase: new URL('https://archives.canadian-ai.ca'),
   openGraph: {
-    title: 'Canadian AI Magazine Archives',
-    description: 'Explore 29 historical issues of Canadian AI Magazine (1984-1992)',
+    title: 'Canadian AI Magazine Archives | Explore Decades of AI Research',
+    description: 'Discover decades of Canadian AI research and publications. Access 29 historical issues from 1984-1992, preserving the pioneering era of artificial intelligence.',
     type: 'website',
+    url: 'https://archives.canadian-ai.ca',
+    siteName: 'Canadian AI Magazine Archives',
+    images: [
+      {
+        url: '/og-facebook.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Canadian AI Magazine Archives - Explore decades of AI research',
+      },
+    ],
+    locale: 'en_CA',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Canadian AI Magazine Archives | Explore the Archives',
+    description: 'Discover decades of Canadian AI research and publications. Visit archives.canadian-ai.ca',
+    images: ['/og-twitter.jpg'],
+    creator: '@CanadianAI',
+    site: '@CanadianAI',
   },
   icons: {
     icon: [
+      {
+        url: '/favicon-192x192.png',
+        sizes: '192x192',
+        type: 'image/png',
+      },
+      {
+        url: '/favicon-512x512.png',
+        sizes: '512x512',
+        type: 'image/png',
+      },
       {
         url: '/icon-light-32x32.png',
         media: '(prefers-color-scheme: light)',
@@ -45,7 +75,13 @@ export const metadata: Metadata = {
         type: 'image/svg+xml',
       },
     ],
-    apple: '/apple-icon.png',
+    apple: '/apple-touch-icon.png',
+    other: [
+      {
+        rel: 'apple-touch-icon',
+        url: '/apple-touch-icon.png',
+      },
+    ],
   },
 }
 
