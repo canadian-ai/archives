@@ -25,27 +25,34 @@ export const metadata: Metadata = {
   keywords: ['Canadian AI', 'artificial intelligence', 'AI history', 'CAIAC', 'machine learning', 'neural networks', 'expert systems', '1980s AI'],
   authors: [{ name: 'Canadian Artificial Intelligence Association (CAIAC)' }],
   generator: 'v0.app',
+  metadataBase: new URL('https://archives.canadian-ai.ca'),
   openGraph: {
-    title: 'Canadian AI Magazine Archives',
-    description: 'Explore 29 historical issues of Canadian AI Magazine (1984-1992)',
+    title: 'Canadian AI Magazine Archives | Explore Decades of AI Research',
+    description: 'Discover decades of Canadian AI research and publications. Access 29 historical issues from 1984-1992, preserving the pioneering era of artificial intelligence.',
     type: 'website',
-  },
-  icons: {
-    icon: [
+    url: 'https://archives.canadian-ai.ca',
+    siteName: 'Canadian AI Magazine Archives',
+    images: [
       {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
+        url: '/social.png',
+        width: 1024,
+        height: 512,
+        alt: 'Canadian AI Magazine Archives - Explore decades of AI research',
       },
     ],
-    apple: '/apple-icon.png',
+    locale: 'en_CA',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Canadian AI Magazine Archives | Explore the Archives',
+    description: 'Discover decades of Canadian AI research and publications. Visit archives.canadian-ai.ca',
+    images: ['/social.png'],
+    creator: '@CanadianAI',
+    site: '@CanadianAI',
+  },
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
   },
 }
 
