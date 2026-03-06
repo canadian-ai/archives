@@ -281,24 +281,40 @@ export default function TimelinePage() {
             <h2 className="text-2xl font-bold mb-8 text-center">Key Insights</h2>
             <div className="grid gap-6">
               <div className="glass-card rounded-xl p-6">
-                <h3 className="font-semibold mb-3 text-primary">The Optimism Gap</h3>
+                <h3 className="font-semibold mb-3 text-primary">The Timing Problem, Not the Vision Problem</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Predictions from the 1980s consistently underestimated the time required for AI breakthroughs.
-                  Most expected capabilities by 1995-2000 that only materialized in the 2010s with deep learning.
+                  The 1980s AI community was largely right about what would happen — they were wrong about when.
+                  Most predictions weren't failures of imagination; they were failures of forecasting the hardware
+                  and data requirements needed to get there. Self-driving vehicles, medical AI, speech recognition,
+                  and machine translation all exist today. The predictions were off by 15–25 years, not fundamentally wrong.
                 </p>
               </div>
               <div className="glass-card rounded-xl p-6">
-                <h3 className="font-semibold mb-3 text-primary">The Path Not Taken</h3>
+                <h3 className="font-semibold mb-3 text-primary">The Paradigm Shift Nobody Saw Coming</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Logic programming and expert systems were expected to dominate AI. Instead, statistical methods
-                  and neural networks became the foundation of modern AI, a paradigm shift few predicted.
+                  The clearest blind spot was methodological. Virtually every prediction assumed logic-based,
+                  symbolic AI would be the path forward. Almost none anticipated that statistical learning — and
+                  eventually deep learning — would make the breakthroughs that symbolic AI never could. This wasn't
+                  just a wrong prediction; it was a wrong worldview that shaped the entire field's direction through
+                  the late 1980s and contributed to the second AI winter.
                 </p>
               </div>
               <div className="glass-card rounded-xl p-6">
-                <h3 className="font-semibold mb-3 text-primary">Hardware as the Bottleneck</h3>
+                <h3 className="font-semibold mb-3 text-primary">The Classification Here Undersells Progress</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Many predictions were algorithmically sound but computationally infeasible. The rise of GPUs
-                  and massive datasets in the 2010s finally enabled ideas from the 1980s to reach their potential.
+                  Several predictions marked "Unfulfilled" or "Partially Fulfilled" deserve a second look. Neural
+                  networks didn't partially succeed — they became the foundation of a trillion-dollar industry.
+                  Speech recognition didn't partially arrive — it's in every smartphone. Machine translation is
+                  woven into the global internet. The bar for "fulfilled" here seems to be perfection, which isn't
+                  a fair standard for 40-year-old predictions.
+                </p>
+              </div>
+              <div className="glass-card rounded-xl p-6">
+                <h3 className="font-semibold mb-3 text-primary">The One Lesson Worth Carrying Forward</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  The researchers of the 1980s were overconfident about timelines and blind to paradigm shifts.
+                  Anyone making AI predictions today should ask: what assumption are we so confident in that we're
+                  not even questioning it?
                 </p>
               </div>
             </div>
