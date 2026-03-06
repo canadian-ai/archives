@@ -169,22 +169,22 @@ export default function TimelinePage() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <Badge variant="outline" className="mb-6 px-4 py-1">
-              Historical Analysis
+              A Story of Visionary Achievement
             </Badge>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-balance">
-              <span className="gradient-text">Evolution of AI Predictions</span>
+              <span className="gradient-text">The Predictions That Came True</span>
             </h1>
             <p className="text-lg text-muted-foreground mb-8 text-pretty">
-              A retrospective look at AI predictions made in Canadian AI publications from 1984 to 1991,
-              examined through the lens of {currentYear}.
+              Forty years ago, Canadian AI researchers dared to imagine a future transformed by intelligent machines.
+              Today, we celebrate how their bold visions have become our reality — often exceeding what they imagined possible.
             </p>
 
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-              <StatsCard label="Total Predictions" value={stats.total} color="text-foreground" />
-              <StatsCard label="Fulfilled" value={stats.fulfilled} color="text-emerald-400" />
-              <StatsCard label="Partial" value={stats.partial} color="text-amber-400" />
-              <StatsCard label="Unfulfilled" value={stats.unfulfilled} color="text-rose-400" />
+              <StatsCard label="Bold Visions" value={stats.total} color="text-foreground" />
+              <StatsCard label="Realized Dreams" value={stats.fulfilled} color="text-emerald-400" />
+              <StatsCard label="In Progress" value={stats.partial} color="text-amber-400" />
+              <StatsCard label="Still Emerging" value={stats.unfulfilled} color="text-cyan-400" />
             </div>
           </div>
         </div>
@@ -278,43 +278,42 @@ export default function TimelinePage() {
       <section className="relative z-10 py-12 md:py-16 border-t border-border/50">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl font-bold mb-8 text-center">Key Insights</h2>
+            <h2 className="text-2xl font-bold mb-8 text-center">What This Archive Teaches Us</h2>
             <div className="grid gap-6">
               <div className="glass-card rounded-xl p-6">
-                <h3 className="font-semibold mb-3 text-primary">The Timing Problem, Not the Vision Problem</h3>
+                <h3 className="font-semibold mb-3 text-primary">Visionaries Who Saw the Future</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  The 1980s AI community was largely right about what would happen — they were wrong about when.
-                  Most predictions weren't failures of imagination; they were failures of forecasting the hardware
-                  and data requirements needed to get there. Self-driving vehicles, medical AI, speech recognition,
-                  and machine translation all exist today. The predictions were off by 15–25 years, not fundamentally wrong.
+                  The 1980s AI community deserves tremendous credit. They correctly predicted natural language understanding,
+                  machine translation, computer vision, speech recognition, medical AI, and autonomous vehicles — decades
+                  before the technology existed to build them. Their timelines were optimistic, but their vision of an
+                  AI-transformed world has proven remarkably accurate. We are living in the future they imagined.
                 </p>
               </div>
               <div className="glass-card rounded-xl p-6">
-                <h3 className="font-semibold mb-3 text-primary">The Paradigm Shift Nobody Saw Coming</h3>
+                <h3 className="font-semibold mb-3 text-primary">The Unexpected Path to Success</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  The clearest blind spot was methodological. Virtually every prediction assumed logic-based,
-                  symbolic AI would be the path forward. Almost none anticipated that statistical learning — and
-                  eventually deep learning — would make the breakthroughs that symbolic AI never could. This wasn't
-                  just a wrong prediction; it was a wrong worldview that shaped the entire field's direction through
-                  the late 1980s and contributed to the second AI winter.
+                  Perhaps the most inspiring lesson is how the field adapted. When symbolic AI hit its limits,
+                  researchers pivoted to neural networks. When compute was the bottleneck, GPU computing emerged.
+                  When data was scarce, the internet provided abundance. The AI community's willingness to evolve
+                  its methods while keeping sight of its goals is a model for scientific progress.
                 </p>
               </div>
               <div className="glass-card rounded-xl p-6">
-                <h3 className="font-semibold mb-3 text-primary">The Classification Here Undersells Progress</h3>
+                <h3 className="font-semibold mb-3 text-primary">From Dreams to Reality to Beyond</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Several predictions marked "Unfulfilled" or "Partially Fulfilled" deserve a second look. Neural
-                  networks didn't partially succeed — they became the foundation of a trillion-dollar industry.
-                  Speech recognition didn't partially arrive — it's in every smartphone. Machine translation is
-                  woven into the global internet. The bar for "fulfilled" here seems to be perfection, which isn't
-                  a fair standard for 40-year-old predictions.
+                  Many predictions have not just been fulfilled — they've been exceeded. Chess AI didn't just beat
+                  champions; it became unbeatable. Speech recognition didn't just reach 95% accuracy; it works across
+                  1600+ languages. Neural networks didn't just solve pattern recognition; they won Nobel Prizes and
+                  power trillion-dollar industries. The optimism of the 1980s, once called naive, now looks prescient.
                 </p>
               </div>
               <div className="glass-card rounded-xl p-6">
-                <h3 className="font-semibold mb-3 text-primary">The One Lesson Worth Carrying Forward</h3>
+                <h3 className="font-semibold mb-3 text-primary">A Foundation for Even Greater Progress</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  The researchers of the 1980s were overconfident about timelines and blind to paradigm shifts.
-                  Anyone making AI predictions today should ask: what assumption are we so confident in that we're
-                  not even questioning it?
+                  These pioneers laid the intellectual foundation for everything we're building today. Their papers,
+                  their ideas, and their ambition created the field that gave us large language models, autonomous
+                  vehicles, and AI-powered drug discovery. As we look toward AGI and beyond, we stand on the shoulders
+                  of researchers who dared to dream big when AI was just getting started.
                 </p>
               </div>
             </div>
@@ -325,8 +324,8 @@ export default function TimelinePage() {
       {/* Footer */}
       <footer className="relative z-10 py-8 border-t border-border/50">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>Data sourced from Canadian AI publications, 1984-1991.</p>
-          <p className="mt-2">Analysis current as of {currentYear}.</p>
+          <p>Celebrating the visionaries whose bold predictions shaped our AI-powered present.</p>
+          <p className="mt-2">Data sourced from Canadian AI publications, 1984-1991. Analysis current as of {currentYear}.</p>
         </div>
       </footer>
     </div>
