@@ -1,77 +1,71 @@
-import React from "react"
-import type { Metadata, Viewport } from 'next'
-import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
-import './globals.css'
-
-const inter = Inter({ 
-  subsets: ["latin"],
-  variable: "--font-inter",
+import React from "react";
+import type { Metadata, Viewport } from 'next';
+import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
+import './globals.css';
+const inter = Inter({
+    subsets: ["latin"],
+    variable: "--font-inter",
 });
-
-const spaceGrotesk = Space_Grotesk({ 
-  subsets: ["latin"],
-  variable: "--font-space-grotesk",
+const spaceGrotesk = Space_Grotesk({
+    subsets: ["latin"],
+    variable: "--font-space-grotesk",
 });
-
 const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains-mono",
+    subsets: ["latin"],
+    variable: "--font-jetbrains-mono",
 });
-
 export const metadata: Metadata = {
-  title: 'Canadian AI Magazine Archives | Pioneering AI Research 1984-1992',
-  description: 'Explore the historical archives of Canadian AI Magazine from 1984-1992. A digital collection preserving the early days of artificial intelligence research in Canada, featuring 29 original issues.',
-  keywords: ['Canadian AI', 'artificial intelligence', 'AI history', 'CAIAC', 'machine learning', 'neural networks', 'expert systems', '1980s AI'],
-  authors: [{ name: 'Canadian Artificial Intelligence Association (CAIAC)' }],
-  generator: 'v0.app',
-  metadataBase: new URL('https://archives.canadian-ai.ca'),
-  openGraph: {
-    title: 'Canadian AI Magazine Archives | Explore Decades of AI Research',
-    description: 'Discover decades of Canadian AI research and publications. Access 29 historical issues from 1984-1992, preserving the pioneering era of artificial intelligence.',
-    type: 'website',
-    url: 'https://archives.canadian-ai.ca',
-    siteName: 'Canadian AI Magazine Archives',
-    images: [
-      {
-        url: '/social.png',
-        width: 1024,
-        height: 512,
-        alt: 'Canadian AI Magazine Archives - Explore decades of AI research',
-      },
-    ],
-    locale: 'en_CA',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Canadian AI Magazine Archives | Explore the Archives',
-    description: 'Discover decades of Canadian AI research and publications. Visit archives.canadian-ai.ca',
-    images: ['/social.png'],
-    creator: '@CanadianAI',
-    site: '@CanadianAI',
-  },
-  icons: {
-    icon: '/logo.png',
-    apple: '/logo.png',
-  },
-}
-
+    title: "Canadian AI Magazine Archives",
+    description: "A historical archive preserving Canadian AI magazine issues and research.",
+    keywords: ['Canadian AI', 'artificial intelligence', 'AI history', 'CAIAC', 'machine learning', 'neural networks', 'expert systems', '1980s AI'],
+    authors: [{ name: 'Canadian Artificial Intelligence Association (CAIAC)' }],
+    generator: 'v0.app',
+    metadataBase: new URL("https://archives.canadian-ai.ca"),
+    openGraph: {
+        type: "website",
+        siteName: "Canadian AI Magazine Archives",
+        title: "Canadian AI Magazine Archives",
+        description: "A historical archive preserving Canadian AI magazine issues and research.",
+        url: "https://archives.canadian-ai.ca",
+        images: [{
+                url: "/opengraph-image.png",
+                width: 1200,
+                height: 630,
+                alt: "Canadian AI Magazine Archives"
+            }]
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Canadian AI Magazine Archives",
+        description: "A historical archive preserving Canadian AI magazine issues and research.",
+        images: ["/twitter-image.png"]
+    },
+    icons: {
+        icon: [{
+                url: "/icon-16x16.png",
+                sizes: "16x16",
+                type: "image/png"
+            }, {
+                url: "/icon-32x32.png",
+                sizes: "32x32",
+                type: "image/png"
+            }, { url: "/icon.svg", type: "image/svg+xml" }],
+        apple: "/apple-icon.png",
+        shortcut: "/favicon.ico"
+    }
+};
 export const viewport: Viewport = {
-  themeColor: '#0a1628',
-  colorScheme: 'dark',
-}
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
+    themeColor: '#0a1628',
+    colorScheme: 'dark',
+};
+export default function RootLayout({ children, }: Readonly<{
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en" className="dark">
+    return (<html lang="en" className="dark">
       <body className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
         {children}
         <Analytics />
       </body>
-    </html>
-  )
+    </html>);
 }
