@@ -1,9 +1,38 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getMagazineById, magazines } from "@/lib/magazine-data";
 import { ViewerClient } from "./viewer-client";
 
 interface ViewerPageProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: ViewerPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const magazine = getMagazineById(id);
+
+  if (!magazine) {
+    return {
+      title: "Issue not found | Canadian AI Archives",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  return {
+    title: `${magazine.title} Volume ${magazine.volume} (${magazine.date}) | Canadian AI Archives`,
+    description: `Reader wrapper for ${magazine.title} Volume ${magazine.volume}, hosted by CAIAC.`,
+    alternates: {
+      canonical: magazine.pdfUrl,
+    },
+    robots: {
+      index: false,
+      follow: true,
+      googleBot: {
+        index: false,
+        follow: true,
+      },
+    },
+  };
 }
 
 export default async function ViewerPage({ params }: ViewerPageProps) {
