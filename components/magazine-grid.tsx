@@ -6,7 +6,6 @@ import { magazines, getYears } from "@/lib/magazine-data";
 import { Button } from "@/components/ui/button";
 import { Grid, List, Filter, Loader2 } from "lucide-react";
 
-// Dynamically import MagazineCard to prevent PDF.js from being evaluated during SSR
 const MagazineCard = dynamic(
   () => import("./magazine-card").then((mod) => mod.MagazineCard),
   {
@@ -38,31 +37,27 @@ export function MagazineGrid() {
 
   return (
     <section id="archives" className="relative py-24">
-      {/* Background elements */}
       <div className="absolute inset-0 grid-bg opacity-30" />
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section header */}
         <div className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
               <Filter className="h-3 w-3" />
-              Archive Browser
+              Selected issue browser
             </div>
             <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               Browse the{" "}
-              <span className="gradient-text">Complete Collection</span>
+              <span className="gradient-text">selected collection</span>
             </h2>
             <p className="mt-3 max-w-xl text-muted-foreground">
-              {filteredMagazines.length} issues spanning{" "}
-              {selectedYear ? `the year ${selectedYear}` : "8 years of AI history"}
+              {filteredMagazines.length} CAIAC-hosted issues{" "}
+              {selectedYear ? `from ${selectedYear}` : "selected from 1984 through Summer 1992"}.
             </p>
           </div>
 
-          {/* Controls */}
           <div className="flex flex-wrap items-center gap-3">
-            {/* View toggle */}
             <div className="glass flex items-center gap-1 rounded-lg p-1">
               <Button
                 variant="ghost"
@@ -94,7 +89,6 @@ export function MagazineGrid() {
 
             <div className="h-6 w-px bg-border/50" />
 
-            {/* Year filter */}
             <div className="flex flex-wrap gap-2">
               <Button
                 variant={selectedYear === null ? "default" : "ghost"}
@@ -106,7 +100,7 @@ export function MagazineGrid() {
                     : "glass text-muted-foreground hover:text-foreground"
                 }`}
               >
-                All Years
+                All selected years
               </Button>
               {years.map((year) => (
                 <Button
@@ -127,7 +121,6 @@ export function MagazineGrid() {
           </div>
         </div>
 
-        {/* Grid */}
         {viewMode === "grid" ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {filteredMagazines.map((magazine, index) => (
@@ -168,14 +161,13 @@ export function MagazineGrid() {
           </div>
         )}
 
-        {/* Empty state */}
         {filteredMagazines.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="mb-4 rounded-full bg-muted p-4">
               <Filter className="h-8 w-8 text-muted-foreground" />
             </div>
             <p className="text-lg font-medium text-foreground">
-              No issues found
+              No selected issues found
             </p>
             <p className="mt-1 text-muted-foreground">
               Try adjusting your filters
@@ -189,6 +181,10 @@ export function MagazineGrid() {
             </Button>
           </div>
         )}
+
+        <p className="mt-10 text-center text-xs leading-5 text-muted-foreground/70">
+          Source PDFs are hosted by CAIAC. For the full official collection, visit CAIAC&apos;s publications archive.
+        </p>
       </div>
     </section>
   );
