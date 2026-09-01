@@ -3,6 +3,9 @@ import type { Metadata, Viewport } from 'next';
 import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
+
+const siteUrl = "https://archives.canadian-ai.ca";
+
 const inter = Inter({
     subsets: ["latin"],
     variable: "--font-inter",
@@ -15,30 +18,45 @@ const jetbrainsMono = JetBrains_Mono({
     subsets: ["latin"],
     variable: "--font-jetbrains-mono",
 });
+
 export const metadata: Metadata = {
-    title: "Canadian AI Magazine Archives",
-    description: "A historical archive preserving Canadian AI magazine issues and research.",
-    keywords: ['Canadian AI', 'artificial intelligence', 'AI history', 'CAIAC', 'machine learning', 'neural networks', 'expert systems', '1980s AI'],
-    authors: [{ name: 'Canadian Artificial Intelligence Association (CAIAC)' }],
-    generator: 'v0.app',
-    metadataBase: new URL("https://archives.canadian-ai.ca"),
+    metadataBase: new URL(siteUrl),
+    title: "Archives | Canadian AI Solutions",
+    description: "A Canadian AI Solutions history project that indexes selected Canadian Artificial Intelligence magazine issues from CAIAC's official archive and explains their place in Canada's AI history.",
+    applicationName: "Canadian AI Archives",
+    authors: [{ name: 'Canadian AI Solutions Inc.', url: 'https://www.canadian-ai.ca' }],
+    creator: 'Canadian AI Solutions Inc.',
+    publisher: 'Canadian AI Solutions Inc.',
+    alternates: {
+        canonical: "/",
+    },
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true,
+            "max-image-preview": "large",
+            "max-snippet": -1,
+        },
+    },
     openGraph: {
         type: "website",
-        siteName: "Canadian AI Magazine Archives",
-        title: "Canadian AI Magazine Archives",
-        description: "A historical archive preserving Canadian AI magazine issues and research.",
-        url: "https://archives.canadian-ai.ca",
+        siteName: "Canadian AI Archives",
+        title: "Archives | Canadian AI Solutions",
+        description: "A Canadian AI Solutions history project linking to selected issues in CAIAC's official Canadian AI magazine archive.",
+        url: siteUrl,
         images: [{
                 url: "/opengraph-image.png",
                 width: 1200,
                 height: 630,
-                alt: "Canadian AI Magazine Archives"
+                alt: "Canadian AI Archives by Canadian AI Solutions"
             }]
     },
     twitter: {
         card: "summary_large_image",
-        title: "Canadian AI Magazine Archives",
-        description: "A historical archive preserving Canadian AI magazine issues and research.",
+        title: "Archives | Canadian AI Solutions",
+        description: "A Canadian AI Solutions history project linking to selected issues in CAIAC's official archive.",
         images: ["/twitter-image.png"]
     },
     icons: {
@@ -59,10 +77,12 @@ export const metadata: Metadata = {
         shortcut: "/favicon.ico"
     }
 };
+
 export const viewport: Viewport = {
     themeColor: '#0a1628',
     colorScheme: 'dark',
 };
+
 export default function RootLayout({ children, }: Readonly<{
     children: React.ReactNode;
 }>) {
