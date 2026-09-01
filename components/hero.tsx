@@ -8,7 +8,6 @@ import Link from "next/link";
 export function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Animated particle background
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -31,16 +30,14 @@ export function Hero() {
       canvas.height = window.innerHeight;
     };
 
-    const createParticle = () => {
-      return {
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        size: Math.random() * 2 + 0.5,
-        alpha: Math.random() * 0.5 + 0.1,
-      };
-    };
+    const createParticle = () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      size: Math.random() * 2 + 0.5,
+      alpha: Math.random() * 0.5 + 0.1,
+    });
 
     const init = () => {
       resize();
@@ -59,13 +56,11 @@ export function Hero() {
         if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
 
-        // Draw particle
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(56, 189, 248, ${p.alpha})`;
         ctx.fill();
 
-        // Draw connections
         particles.slice(i + 1).forEach((p2) => {
           const dx = p.x - p2.x;
           const dy = p.y - p2.y;
@@ -98,34 +93,25 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen overflow-hidden">
-      {/* Animated canvas background */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 opacity-40"
         style={{ pointerEvents: "none" }}
       />
 
-      {/* Grid background */}
       <div className="absolute inset-0 grid-bg-animated opacity-50" />
-
-      {/* Radial gradient overlay */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_var(--background)_70%)]" />
-
-      {/* Glow orbs */}
       <div className="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-primary/10 blur-[120px]" />
       <div className="absolute bottom-1/4 right-1/4 h-64 w-64 rounded-full bg-accent/10 blur-[100px]" />
 
-      {/* Content */}
       <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-4 pt-20 text-center sm:px-6 lg:px-8">
-        {/* Badge */}
         <div className="glass mb-8 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
           <Sparkles className="h-4 w-4 text-primary" />
-          <span className="text-muted-foreground">Historical Archive Collection</span>
+          <span className="text-muted-foreground">Canadian AI Solutions history project</span>
           <span className="h-1 w-1 rounded-full bg-primary" />
-          <span className="text-foreground font-medium">1984-1992</span>
+          <span className="text-foreground font-medium">Selected issues: 1984-1992</span>
         </div>
 
-        {/* Main title */}
         <h1 className="text-balance text-5xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-8xl animate-in fade-in slide-in-from-bottom-6 duration-700 delay-150">
           Canadian{" "}
           <span className="gradient-text relative">
@@ -151,17 +137,16 @@ export function Hero() {
             </svg>
           </span>
           <span className="block mt-2 text-muted-foreground/80 text-4xl sm:text-5xl lg:text-6xl font-light">
-            Magazine Archives
+            History Reader
           </span>
         </h1>
 
-        {/* Description */}
         <p className="mx-auto mt-8 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground sm:text-xl animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
-          Journey through the pioneering days of artificial intelligence research in Canada.
-          A digital preservation of groundbreaking articles, predictions, and discoveries.
+          Explore a selected window of Canadian Artificial Intelligence magazine through links to
+          CAIAC&apos;s official archive. This reader was built by Canadian AI Solutions as a tribute to
+          the history that inspired our company name.
         </p>
 
-        {/* Stats */}
         <div className="mt-12 flex flex-wrap items-center justify-center gap-6 sm:gap-12 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-500">
           <div className="group flex items-center gap-3">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl glass border border-primary/20 transition-all duration-300 group-hover:border-primary/50 group-hover:glow-primary">
@@ -169,7 +154,7 @@ export function Hero() {
             </div>
             <div className="text-left">
               <p className="text-3xl font-bold text-foreground">29</p>
-              <p className="text-sm text-muted-foreground">Issues</p>
+              <p className="text-sm text-muted-foreground">Selected issues</p>
             </div>
           </div>
 
@@ -180,13 +165,12 @@ export function Hero() {
               <Clock className="h-6 w-6 text-accent" />
             </div>
             <div className="text-left">
-              <p className="text-3xl font-bold text-foreground">8</p>
-              <p className="text-sm text-muted-foreground">Years of History</p>
+              <p className="text-3xl font-bold text-foreground">1984-92</p>
+              <p className="text-sm text-muted-foreground">Window shown here</p>
             </div>
           </div>
         </div>
 
-        {/* CTA Buttons */}
         <div className="mt-12 flex flex-col gap-4 sm:flex-row animate-in fade-in slide-in-from-bottom-12 duration-700 delay-700">
           <Link href="/viewer/vol-1">
             <Button
@@ -206,12 +190,16 @@ export function Hero() {
               variant="outline"
               className="rounded-full border-border/50 bg-transparent px-8 backdrop-blur-sm transition-all duration-300 hover:border-primary/50 hover:bg-primary/10"
             >
-              Browse Archives
+              Browse Selected Issues
             </Button>
           </Link>
         </div>
 
-        {/* Scroll indicator */}
+        <p className="mt-8 max-w-2xl text-xs leading-5 text-muted-foreground/70">
+          Canadian AI Solutions is not affiliated with CAIAC. Historical magazine issues are hosted by
+          CAIAC and remain subject to CAIAC&apos;s stated copyright terms.
+        </p>
+
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
           <div className="flex flex-col items-center gap-2 text-muted-foreground/50">
             <span className="text-xs uppercase tracking-widest">Scroll</span>
