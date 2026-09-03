@@ -1,10 +1,9 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import Link from "next/link"
-import { ArrowLeft, Calendar, Filter, ChevronDown, ChevronUp, Sparkles, Target, AlertCircle, CheckCircle2, Clock } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { useMemo, useState } from "react";
+import { AlertCircle, CheckCircle2, ChevronDown, ChevronUp, Clock, Filter, Sparkles, Target } from "lucide-react";
+import { Header } from "@/components/header";
+import { Button } from "@/components/ui/button";
 import {
   predictions,
   categories,
@@ -12,322 +11,243 @@ import {
   getStatusColor,
   getStatusBgColor,
   getStatusLabel,
-  type PredictionStatus,
-  type PredictionCategory,
   type Prediction,
-} from "@/lib/timeline-data"
+} from "@/lib/timeline-data";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
 function TimelineCard({ prediction, currentYear }: { prediction: Prediction; currentYear: number }) {
-  const [isExpanded, setIsExpanded] = useState(false)
-  const yearsAgo = currentYear - prediction.year
+  const [isExpanded, setIsExpanded] = useState(false);
+  const yearsAgo = currentYear - prediction.year;
 
   const statusIcon = {
-    fulfilled: <CheckCircle2 className="w-4 h-4" />,
-    exceeded: <Sparkles className="w-4 h-4" />,
-    partial: <Clock className="w-4 h-4" />,
-    unfulfilled: <AlertCircle className="w-4 h-4" />,
-  }
+    fulfilled: <CheckCircle2 className="h-3.5 w-3.5" />,
+    exceeded: <Sparkles className="h-3.5 w-3.5" />,
+    partial: <Clock className="h-3.5 w-3.5" />,
+    unfulfilled: <AlertCircle className="h-3.5 w-3.5" />,
+  };
 
   return (
-    <div className="relative pl-8 pb-12 last:pb-0">
-      {/* Timeline line */}
-      <div className="absolute left-[11px] top-2 bottom-0 w-px bg-gradient-to-b from-primary/50 via-primary/20 to-transparent" />
-      
-      {/* Timeline dot */}
-      <div className="absolute left-0 top-2 w-6 h-6 rounded-full bg-background border-2 border-primary flex items-center justify-center">
-        <div className="w-2 h-2 rounded-full bg-primary" />
+    <article className="grid border-b border-foreground/10 md:grid-cols-[9rem_1fr]">
+      <div className="border-b border-foreground/10 px-5 py-6 md:border-b-0 md:border-r md:px-6 md:py-8">
+        <p className="brand-emerald font-mono text-lg font-semibold">{prediction.year}</p>
+        <p className="mt-1 text-[9px] uppercase tracking-[0.16em] text-muted-foreground">{yearsAgo} years ago</p>
       </div>
 
-      {/* Card */}
-      <div
-        className={`glass-card rounded-xl p-6 transition-all duration-300 cursor-pointer hover:border-primary/30 ${
-          isExpanded ? "border-primary/40" : ""
-        }`}
-        onClick={() => setIsExpanded(!isExpanded)}
+      <button
+        type="button"
+        className="group w-full px-5 py-6 text-left transition-colors hover:bg-[var(--brand-emerald-soft)] md:px-8 md:py-8"
+        onClick={() => setIsExpanded((expanded) => !expanded)}
+        aria-expanded={isExpanded}
       >
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="text-primary font-mono text-sm">{prediction.year}</span>
-              <span className="text-muted-foreground text-xs">({yearsAgo} years ago)</span>
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+          <div className="max-w-2xl">
+            <div className="flex flex-wrap gap-2 text-[9px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              <span>{prediction.category}</span>
+              <span aria-hidden="true">/</span>
+              <span>{prediction.scope}</span>
             </div>
-            <h3 className="text-lg font-semibold text-foreground mb-2">{prediction.title}</h3>
-            <div className="flex flex-wrap gap-2">
-              <Badge variant="outline" className="text-xs">
-                {prediction.category}
-              </Badge>
-              <Badge variant="outline" className="text-xs">
-                {prediction.scope}
-              </Badge>
-            </div>
+            <h3 className="mt-3 font-serif text-2xl tracking-[-0.02em] sm:text-3xl">{prediction.title}</h3>
           </div>
+
           <div className="flex items-center gap-2">
-            <div
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium ${getStatusBgColor(
-                prediction.status
+            <span
+              className={`inline-flex items-center gap-1.5 border px-2.5 py-1.5 text-[9px] font-semibold uppercase tracking-[0.12em] ${getStatusBgColor(
+                prediction.status,
               )} ${getStatusColor(prediction.status)}`}
             >
               {statusIcon[prediction.status]}
               {getStatusLabel(prediction.status)}
-            </div>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-            </Button>
+            </span>
+            <span className="flex h-8 w-8 items-center justify-center border border-foreground/10 bg-background">
+              {isExpanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            </span>
           </div>
         </div>
 
-        {/* Prediction text (always visible) */}
-        <div className="mb-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-            <Target className="w-4 h-4" />
-            <span>Original Prediction</span>
-          </div>
-          <p className="text-sm text-foreground/80 leading-relaxed">{prediction.prediction}</p>
+        <div className="mt-5 max-w-3xl">
+          <p className="flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            <Target className="h-3.5 w-3.5" />
+            Original prediction
+          </p>
+          <p className="mt-2 text-sm leading-6 text-foreground/75">{prediction.prediction}</p>
         </div>
 
-        {/* Expanded content */}
-        {isExpanded && (
-          <div className="pt-4 border-t border-border/50 animate-in fade-in slide-in-from-top-2 duration-300">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-              <Sparkles className="w-4 h-4" />
-              <span>Outcome as of {currentYear}</span>
-            </div>
-            <p className="text-sm text-foreground/80 leading-relaxed mb-4">{prediction.outcome}</p>
-            <div className="text-xs text-muted-foreground">
-              Source: {prediction.source}
-            </div>
+        {isExpanded ? (
+          <div className="mt-6 max-w-3xl border-t border-foreground/10 pt-6">
+            <p className="brand-emerald flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.14em]">
+              <Sparkles className="h-3.5 w-3.5" />
+              Outcome as of {currentYear}
+            </p>
+            <p className="mt-2 text-sm leading-6 text-foreground/75">{prediction.outcome}</p>
+            <p className="mt-4 font-mono text-[9px] text-muted-foreground">Source: {prediction.source}</p>
           </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
-function StatsCard({ label, value, color }: { label: string; value: number; color: string }) {
-  return (
-    <div className="glass-card rounded-xl p-4 text-center">
-      <div className={`text-3xl font-bold mb-1 ${color}`}>{value}</div>
-      <div className="text-xs text-muted-foreground">{label}</div>
-    </div>
-  )
+        ) : null}
+      </button>
+    </article>
+  );
 }
 
 export default function TimelinePage() {
-  const currentYear = new Date().getFullYear()
-  const [selectedCategory, setSelectedCategory] = useState<string>("all")
-  const [selectedYear, setSelectedYear] = useState<string>("all")
-  const [selectedStatus, setSelectedStatus] = useState<string>("all")
+  const currentYear = new Date().getFullYear();
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedYear, setSelectedYear] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
 
   const filteredPredictions = useMemo(() => {
-    return predictions.filter((p) => {
-      if (selectedCategory !== "all" && p.category !== selectedCategory) return false
-      if (selectedYear !== "all" && p.year !== parseInt(selectedYear)) return false
-      if (selectedStatus !== "all" && p.status !== selectedStatus) return false
-      return true
-    })
-  }, [selectedCategory, selectedYear, selectedStatus])
+    return predictions.filter((prediction) => {
+      if (selectedCategory !== "all" && prediction.category !== selectedCategory) return false;
+      if (selectedYear !== "all" && prediction.year !== Number.parseInt(selectedYear, 10)) return false;
+      if (selectedStatus !== "all" && prediction.status !== selectedStatus) return false;
+      return true;
+    });
+  }, [selectedCategory, selectedStatus, selectedYear]);
 
   const stats = useMemo(() => {
-    const fulfilled = predictions.filter((p) => p.status === "fulfilled" || p.status === "exceeded").length
-    const partial = predictions.filter((p) => p.status === "partial").length
-    const unfulfilled = predictions.filter((p) => p.status === "unfulfilled").length
-    return { fulfilled, partial, unfulfilled, total: predictions.length }
-  }, [])
+    const realized = predictions.filter((prediction) => prediction.status === "fulfilled" || prediction.status === "exceeded").length;
+    const partial = predictions.filter((prediction) => prediction.status === "partial").length;
+    const emerging = predictions.filter((prediction) => prediction.status === "unfulfilled").length;
+    return { realized, partial, emerging, total: predictions.length };
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Background effects */}
-      <div className="fixed inset-0 grid-bg-animated pointer-events-none" />
-      <div className="fixed inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
+      <div className="grain" />
+      <Header />
 
-      {/* Header */}
-      <header className="relative z-10 border-b border-border/50 bg-background/80 backdrop-blur-xl">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-              <ArrowLeft className="w-4 h-4" />
-              <span className="text-sm">Back to Archive</span>
-            </Link>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Calendar className="w-4 h-4" />
-              <span>Viewing from {currentYear}</span>
+      <main>
+        <section className="border-b border-foreground/10">
+          <div className="mx-auto grid max-w-[1500px] lg:grid-cols-[1fr_0.72fr]">
+            <div className="px-5 py-16 sm:px-8 md:px-12 lg:border-r lg:border-foreground/10 lg:px-14 lg:py-24 xl:px-20">
+              <p className="brand-kicker">Prediction timeline · Archive interpretation</p>
+              <h1 className="mt-5 max-w-4xl font-serif text-5xl leading-[0.98] tracking-[-0.04em] sm:text-6xl lg:text-7xl">
+                The future, described from the past.
+              </h1>
+              <p className="mt-6 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
+                A reading of early Canadian AI predictions against what became possible. The interesting part is not
+                whether every date was right; it is how much of the direction of travel was visible decades in advance.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 border-t border-foreground/10 lg:border-t-0">
+              {[
+                ["Bold visions", stats.total],
+                ["Realized", stats.realized],
+                ["In progress", stats.partial],
+                ["Still emerging", stats.emerging],
+              ].map(([label, value], index) => (
+                <div
+                  key={String(label)}
+                  className={`flex min-h-40 flex-col justify-between p-6 sm:p-8 ${index % 2 === 0 ? "border-r border-foreground/10" : ""} ${index < 2 ? "border-b border-foreground/10" : ""}`}
+                >
+                  <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">{label}</span>
+                  <span className="brand-emerald font-serif text-5xl">{value}</span>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </header>
+        </section>
 
-      {/* Hero */}
-      <section className="relative z-10 py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <Badge variant="outline" className="mb-6 px-4 py-1">
-              A Story of Visionary Achievement
-            </Badge>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-balance">
-              <span className="gradient-text">The Predictions That Came True</span>
-            </h1>
-            <p className="text-lg text-muted-foreground mb-8 text-pretty">
-              Forty years ago, Canadian AI researchers dared to imagine a future transformed by intelligent machines.
-              Today, we celebrate how their bold visions have become our reality — often exceeding what they imagined possible.
-            </p>
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-              <StatsCard label="Bold Visions" value={stats.total} color="text-foreground" />
-              <StatsCard label="Realized Dreams" value={stats.fulfilled} color="text-emerald-400" />
-              <StatsCard label="In Progress" value={stats.partial} color="text-amber-400" />
-              <StatsCard label="Still Emerging" value={stats.unfulfilled} color="text-cyan-400" />
+        <section className="border-b border-foreground/10 bg-card">
+          <div className="mx-auto flex max-w-[1500px] flex-col gap-4 px-5 py-5 sm:px-8 md:px-12 lg:flex-row lg:items-center lg:px-14 xl:px-20">
+            <div className="flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+              <Filter className="h-3.5 w-3.5" />
+              Filter archive
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Filters */}
-      <section className="relative z-10 py-6 border-y border-border/50 bg-card/30 backdrop-blur-sm">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Filter className="w-4 h-4" />
-              <span>Filter by:</span>
-            </div>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-2">
               <Select value={selectedYear} onValueChange={setSelectedYear}>
-                <SelectTrigger className="w-32 h-9 text-sm">
+                <SelectTrigger className="h-9 w-32 rounded-none bg-background text-xs">
                   <SelectValue placeholder="Year" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Years</SelectItem>
+                  <SelectItem value="all">All years</SelectItem>
                   {years.map((year) => (
-                    <SelectItem key={year} value={year.toString()}>
-                      {year}
-                    </SelectItem>
+                    <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
 
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-48 h-9 text-sm">
+                <SelectTrigger className="h-9 w-48 rounded-none bg-background text-xs">
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat}
-                    </SelectItem>
+                  <SelectItem value="all">All categories</SelectItem>
+                  {categories.map((category) => (
+                    <SelectItem key={category} value={category}>{category}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
 
               <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-                <SelectTrigger className="w-40 h-9 text-sm">
+                <SelectTrigger className="h-9 w-40 rounded-none bg-background text-xs">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="all">All statuses</SelectItem>
                   <SelectItem value="fulfilled">Fulfilled</SelectItem>
+                  <SelectItem value="exceeded">Exceeded</SelectItem>
                   <SelectItem value="partial">Partial</SelectItem>
                   <SelectItem value="unfulfilled">Unfulfilled</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <div className="sm:ml-auto text-sm text-muted-foreground">
-              Showing {filteredPredictions.length} of {predictions.length} predictions
+            <span className="text-xs text-muted-foreground lg:ml-auto">
+              Showing {filteredPredictions.length} of {predictions.length}
+            </span>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-[1500px] border-x border-foreground/10">
+          {filteredPredictions.length ? (
+            filteredPredictions.map((prediction) => (
+              <TimelineCard key={prediction.id} prediction={prediction} currentYear={currentYear} />
+            ))
+          ) : (
+            <div className="px-5 py-16 text-center">
+              <p className="font-serif text-2xl">No predictions match those filters.</p>
+              <Button
+                variant="outline"
+                className="mt-5 rounded-none bg-transparent"
+                onClick={() => {
+                  setSelectedCategory("all");
+                  setSelectedYear("all");
+                  setSelectedStatus("all");
+                }}
+              >
+                Clear filters
+              </Button>
+            </div>
+          )}
+        </section>
+
+        <section className="border-t border-foreground/10 bg-foreground text-background">
+          <div className="mx-auto grid max-w-[1500px] lg:grid-cols-[0.62fr_1.38fr]">
+            <div className="border-b border-background/15 px-5 py-14 sm:px-8 md:px-12 lg:border-b-0 lg:border-r lg:px-14 lg:py-20 xl:px-20">
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-emerald-400">Archive note</p>
+              <h2 className="mt-5 font-serif text-4xl tracking-[-0.03em]">What the timeline teaches.</h2>
+            </div>
+            <div className="grid md:grid-cols-2">
+              {[
+                ["Direction mattered more than dates", "Researchers often missed the timeline while correctly identifying the capabilities that would eventually become foundational."],
+                ["Methods changed", "Symbolic systems, neural networks, GPUs, internet-scale data, and new model architectures changed the route without erasing the original ambition."],
+                ["Canada was part of the conversation early", "These publications preserve a record of Canadian institutions and researchers thinking seriously about intelligent systems decades before the current AI wave."],
+                ["Archives create product context", "Looking backward makes the present less magical: today's systems sit on a long chain of ideas, experiments, failed approaches, and renewed bets."],
+              ].map(([title, text], index) => (
+                <div key={title} className={`p-6 sm:p-8 ${index % 2 === 0 ? "md:border-r md:border-background/15" : ""} ${index < 2 ? "border-b border-background/15" : ""}`}>
+                  <h3 className="font-serif text-2xl">{title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-background/65">{text}</p>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Timeline */}
-      <section className="relative z-10 py-12 md:py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            {filteredPredictions.length > 0 ? (
-              filteredPredictions.map((prediction) => (
-                <TimelineCard key={prediction.id} prediction={prediction} currentYear={currentYear} />
-              ))
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">No predictions match your filters.</p>
-                <Button
-                  variant="outline"
-                  className="mt-4 bg-transparent"
-                  onClick={() => {
-                    setSelectedCategory("all")
-                    setSelectedYear("all")
-                    setSelectedStatus("all")
-                  }}
-                >
-                  Clear Filters
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Key Insights */}
-      <section className="relative z-10 py-12 md:py-16 border-t border-border/50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl font-bold mb-8 text-center">What This Archive Teaches Us</h2>
-            <div className="grid gap-6">
-              <div className="glass-card rounded-xl p-6">
-                <h3 className="font-semibold mb-3 text-primary">Visionaries Who Saw the Future</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  The 1980s AI community deserves tremendous credit. They correctly predicted natural language understanding,
-                  machine translation, computer vision, speech recognition, medical AI, and autonomous vehicles — decades
-                  before the technology existed to build them. Their timelines were optimistic, but their vision of an
-                  AI-transformed world has proven remarkably accurate. We are living in the future they imagined.
-                </p>
-              </div>
-              <div className="glass-card rounded-xl p-6">
-                <h3 className="font-semibold mb-3 text-primary">The Unexpected Path to Success</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Perhaps the most inspiring lesson is how the field adapted. When symbolic AI hit its limits,
-                  researchers pivoted to neural networks. When compute was the bottleneck, GPU computing emerged.
-                  When data was scarce, the internet provided abundance. The AI community's willingness to evolve
-                  its methods while keeping sight of its goals is a model for scientific progress.
-                </p>
-              </div>
-              <div className="glass-card rounded-xl p-6">
-                <h3 className="font-semibold mb-3 text-primary">From Dreams to Reality to Beyond</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Many predictions have not just been fulfilled — they've been exceeded. Chess AI didn't just beat
-                  champions; it became unbeatable. Speech recognition didn't just reach 95% accuracy; it works across
-                  1600+ languages. Neural networks didn't just solve pattern recognition; they won Nobel Prizes and
-                  power trillion-dollar industries. The optimism of the 1980s, once called naive, now looks prescient.
-                </p>
-              </div>
-              <div className="glass-card rounded-xl p-6">
-                <h3 className="font-semibold mb-3 text-primary">A Foundation for Even Greater Progress</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  These pioneers laid the intellectual foundation for everything we're building today. Their papers,
-                  their ideas, and their ambition created the field that gave us large language models, autonomous
-                  vehicles, and AI-powered drug discovery. As we look toward AGI and beyond, we stand on the shoulders
-                  of researchers who dared to dream big when AI was just getting started.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="relative z-10 py-8 border-t border-border/50">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>Celebrating the visionaries whose bold predictions shaped our AI-powered present.</p>
-          <p className="mt-2">Data sourced from Canadian AI publications, 1984-1991. Analysis current as of {currentYear}.</p>
-        </div>
-      </footer>
+        </section>
+      </main>
     </div>
-  )
+  );
 }
