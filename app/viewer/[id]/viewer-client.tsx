@@ -7,12 +7,10 @@ import {
   ChevronRight,
   Download,
   ExternalLink,
-  BookOpen,
-  Calendar,
 } from "lucide-react";
 import type { Magazine } from "@/lib/magazine-data";
 import { PDFViewer } from "@/components/pdf-viewer";
-import { Button } from "@/components/ui/button";
+import { CaiMark } from "@/components/cai-mark";
 
 interface ViewerClientProps {
   magazine: Magazine;
@@ -29,152 +27,99 @@ export function ViewerClient({
 }: ViewerClientProps) {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="glass sticky top-0 z-50 border-b border-border/30">
-        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          {/* Left section */}
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 rounded-xl transition-all hover:bg-primary/10 hover:text-primary"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span className="hidden sm:inline">Archives</span>
-              </Button>
+      <div className="grain" />
+
+      <header className="sticky top-0 z-50 border-b border-foreground/10 bg-background/95 backdrop-blur-xl">
+        <div className="mx-auto flex min-h-16 max-w-[1500px] items-center justify-between gap-3 px-3 sm:px-5 lg:px-8">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-5">
+            <Link
+              href="/"
+              className="flex h-9 w-9 shrink-0 items-center justify-center border border-foreground/10 transition-colors hover:border-foreground"
+              aria-label="Back to Archives"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
             </Link>
 
-            <div className="hidden h-6 w-px bg-border/50 sm:block" />
+            <div className="hidden h-7 w-px bg-foreground/10 sm:block" />
 
-            {/* Magazine info */}
-            <div className="hidden items-center gap-3 sm:flex">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
-                <BookOpen className="h-4 w-4 text-primary" />
-              </div>
-              <div>
-                <h1 className="flex items-center gap-2 text-sm font-medium text-foreground">
-                  {magazine.title}
-                  <span className="rounded-md bg-secondary px-2 py-0.5 font-mono text-xs text-muted-foreground">
-                    Vol. {magazine.volume}
+            <div className="flex min-w-0 items-center gap-3">
+              <CaiMark className="hidden h-7 w-7 shrink-0 sm:block" />
+              <div className="min-w-0">
+                <div className="flex items-baseline gap-2">
+                  <span className="brand-emerald shrink-0 font-mono text-[9px] font-semibold uppercase tracking-[0.14em]">
+                    Vol. {magazine.volume.toString().padStart(2, "0")}
                   </span>
-                </h1>
-                <p className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Calendar className="h-3 w-3" />
-                  {magazine.date}
+                  <h1 className="truncate font-serif text-sm sm:text-base">{magazine.title}</h1>
+                </div>
+                <p className="mt-0.5 hidden text-[9px] uppercase tracking-[0.16em] text-muted-foreground sm:block">
+                  {magazine.date} · Canadian AI Archives
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Right section */}
-          <div className="flex items-center gap-2">
-            {/* Issue navigation */}
-            <div className="flex items-center gap-1">
-              {prevMagazine ? (
-                <Link href={`/viewer/${prevMagazine.id}`}>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="gap-1 rounded-xl transition-all hover:bg-primary/10 hover:text-primary"
-                    title={`Volume ${prevMagazine.volume}`}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                    <span className="hidden font-mono text-xs sm:inline">
-                      {prevMagazine.volume.toString().padStart(2, "0")}
-                    </span>
-                  </Button>
-                </Link>
-              ) : (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  disabled
-                  className="gap-1 rounded-xl opacity-30"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-              )}
-
-              <div className="glass flex items-center gap-1 rounded-lg px-3 py-1.5">
-                <span className="font-mono text-sm font-bold text-primary">
-                  {magazine.volume.toString().padStart(2, "0")}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  / {totalMagazines}
-                </span>
-              </div>
-
-              {nextMagazine ? (
-                <Link href={`/viewer/${nextMagazine.id}`}>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="gap-1 rounded-xl transition-all hover:bg-primary/10 hover:text-primary"
-                    title={`Volume ${nextMagazine.volume}`}
-                  >
-                    <span className="hidden font-mono text-xs sm:inline">
-                      {nextMagazine.volume.toString().padStart(2, "0")}
-                    </span>
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-              ) : (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  disabled
-                  className="gap-1 rounded-xl opacity-30"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
-
-            <div className="h-6 w-px bg-border/50" />
-
-            {/* Actions */}
-            <a href={magazine.pdfUrl} target="_blank" rel="noopener noreferrer">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 rounded-xl transition-all hover:bg-primary/10 hover:text-primary"
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+            {prevMagazine ? (
+              <Link
+                href={`/viewer/${prevMagazine.id}`}
+                className="flex h-9 items-center gap-1 border border-foreground/10 px-2 text-xs transition-colors hover:border-foreground sm:px-3"
+                title={`Previous: Volume ${prevMagazine.volume}`}
               >
-                <ExternalLink className="h-4 w-4" />
-                <span className="hidden sm:inline">Open</span>
-              </Button>
+                <ChevronLeft className="h-3.5 w-3.5" />
+                <span className="hidden font-mono text-[9px] sm:inline">{prevMagazine.volume.toString().padStart(2, "0")}</span>
+              </Link>
+            ) : (
+              <span className="flex h-9 w-9 items-center justify-center border border-foreground/10 opacity-25">
+                <ChevronLeft className="h-3.5 w-3.5" />
+              </span>
+            )}
+
+            <span className="hidden h-9 items-center border border-foreground/10 px-3 font-mono text-[9px] text-muted-foreground md:flex">
+              {magazine.volume.toString().padStart(2, "0")} / {totalMagazines.toString().padStart(2, "0")}
+            </span>
+
+            {nextMagazine ? (
+              <Link
+                href={`/viewer/${nextMagazine.id}`}
+                className="flex h-9 items-center gap-1 border border-foreground/10 px-2 text-xs transition-colors hover:border-foreground sm:px-3"
+                title={`Next: Volume ${nextMagazine.volume}`}
+              >
+                <span className="hidden font-mono text-[9px] sm:inline">{nextMagazine.volume.toString().padStart(2, "0")}</span>
+                <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
+            ) : (
+              <span className="flex h-9 w-9 items-center justify-center border border-foreground/10 opacity-25">
+                <ChevronRight className="h-3.5 w-3.5" />
+              </span>
+            )}
+
+            <a
+              href={magazine.pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden h-9 items-center gap-1.5 border border-foreground/10 px-3 text-[9px] font-semibold uppercase tracking-[0.13em] transition-colors hover:border-foreground sm:flex"
+            >
+              Open
+              <ExternalLink className="h-3 w-3" />
             </a>
-            <a href={magazine.pdfUrl} download>
-              <Button
-                size="sm"
-                className="gap-2 rounded-xl bg-primary/10 text-primary transition-all hover:bg-primary hover:text-primary-foreground"
-              >
-                <Download className="h-4 w-4" />
-                <span className="hidden sm:inline">Download</span>
-              </Button>
+            <a
+              href={magazine.pdfUrl}
+              download
+              className="brand-emerald-bg flex h-9 items-center gap-1.5 border border-[var(--brand-emerald)] px-3 text-[9px] font-semibold uppercase tracking-[0.13em] transition-opacity hover:opacity-85"
+            >
+              <Download className="h-3 w-3" />
+              <span className="hidden sm:inline">PDF</span>
             </a>
           </div>
         </div>
       </header>
 
-      {/* Mobile title bar */}
-      <div className="glass border-b border-border/30 px-4 py-3 sm:hidden">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 font-mono text-lg font-bold text-primary">
-            {magazine.volume.toString().padStart(2, "0")}
-          </div>
-          <div>
-            <h1 className="font-medium text-foreground">{magazine.title}</h1>
-            <p className="text-xs text-muted-foreground">{magazine.date}</p>
-          </div>
-        </div>
+      <div className="border-b border-foreground/10 px-4 py-3 sm:hidden">
+        <p className="text-xs text-muted-foreground">{magazine.date} · Canadian AI Archives</p>
       </div>
 
-      {/* PDF Viewer */}
-      <main className="relative">
-        {/* Background grid */}
-        <div className="absolute inset-0 grid-bg opacity-20 pointer-events-none" />
-
+      <main className="relative bg-secondary/50">
+        <div className="pointer-events-none absolute inset-0 grid-bg opacity-45" />
         <PDFViewer
           pdfUrl={magazine.pdfUrl}
           title={`Vol. ${magazine.volume} - ${magazine.date}`}

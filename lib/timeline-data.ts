@@ -247,13 +247,12 @@ export const years = [1984, 1985, 1986, 1987, 1988, 1989, 1990, 1991]
 export function getStatusColor(status: PredictionStatus): string {
   switch (status) {
     case "fulfilled":
-      return "text-emerald-400"
     case "exceeded":
-      return "text-cyan-400"
+      return "text-[var(--brand-emerald-strong)]"
     case "partial":
-      return "text-sky-400"
+      return "text-foreground"
     case "unfulfilled":
-      return "text-violet-400"
+      return "text-muted-foreground"
     default:
       return "text-muted-foreground"
   }
@@ -262,15 +261,15 @@ export function getStatusColor(status: PredictionStatus): string {
 export function getStatusBgColor(status: PredictionStatus): string {
   switch (status) {
     case "fulfilled":
-      return "bg-emerald-500/20 border-emerald-500/30"
+      return "bg-[var(--brand-emerald-soft)] border-[var(--brand-emerald)]/30"
     case "exceeded":
-      return "bg-cyan-500/20 border-cyan-500/30"
+      return "bg-[var(--brand-emerald-soft)] border-[var(--brand-emerald)]"
     case "partial":
-      return "bg-sky-500/20 border-sky-500/30"
+      return "bg-secondary border-foreground/15"
     case "unfulfilled":
-      return "bg-violet-500/20 border-violet-500/30"
+      return "bg-background border-foreground/10"
     default:
-      return "bg-muted/20 border-muted/30"
+      return "bg-background border-foreground/10"
   }
 }
 
