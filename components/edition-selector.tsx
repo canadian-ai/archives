@@ -36,7 +36,7 @@ export function EditionSelector({ magazines, className }: EditionSelectorProps) 
       transition={{ duration: reduceMotion ? 0 : 0.3, delay: reduceMotion ? 0 : 0.12 }}
       className={cn("relative w-full", className)}
     >
-      <div className="no-scrollbar overflow-x-auto pb-3">
+      <div className="overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <div className="flex min-w-max items-stretch gap-2 pr-5 sm:pr-8">
           {magazines.map((magazine, index) => {
             const isActive = activeId === magazine.id;
@@ -53,8 +53,19 @@ export function EditionSelector({ magazines, className }: EditionSelectorProps) 
                   width: isActive ? "clamp(16.5rem, 72vw, 24rem)" : "4.75rem",
                   opacity: 1,
                 }}
-                transition={{ duration: reduceMotion ? 0 : 0.3, ease: "easeInOut", delay: reduceMotion ? 0 : Math.min(index * 0.015, 0.2) }}
-                onClick={() => setActiveId(magazine.id)}
+                transition={{
+                  duration: reduceMotion ? 0 : 0.3,
+                  ease: "easeInOut",
+                  delay: reduceMotion ? 0 : Math.min(index * 0.015, 0.2),
+                }}
+                onClick={(event) => {
+                  setActiveId(magazine.id);
+                  event.currentTarget.scrollIntoView({
+                    behavior: reduceMotion ? "auto" : "smooth",
+                    block: "nearest",
+                    inline: "center",
+                  });
+                }}
                 onHoverStart={() => setActiveId(magazine.id)}
                 onFocus={() => setActiveId(magazine.id)}
                 onKeyDown={(event) => {
@@ -139,6 +150,7 @@ type EditionCoverProps = {
 
 function EditionCover({ magazine, active }: EditionCoverProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const requestedRef = useRef(false);
   const [shouldLoad, setShouldLoad] = useState(active);
   const [coverUrl, setCoverUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -170,10 +182,11 @@ function EditionCover({ magazine, active }: EditionCoverProps) {
   }, [shouldLoad]);
 
   useEffect(() => {
-    if (!shouldLoad || coverUrl || loading) {
+    if (!shouldLoad || requestedRef.current) {
       return;
     }
 
+    requestedRef.current = true;
     let cancelled = false;
     setLoading(true);
 
@@ -197,7 +210,7 @@ function EditionCover({ magazine, active }: EditionCoverProps) {
     return () => {
       cancelled = true;
     };
-  }, [coverUrl, loading, magazine.id, magazine.pdfUrl, shouldLoad]);
+  }, [magazine.id, magazine.pdfUrl, shouldLoad]);
 
   return (
     <div ref={containerRef} className="absolute inset-0 bg-[#f2f0eb]">
