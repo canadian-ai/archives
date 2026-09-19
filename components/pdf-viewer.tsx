@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { fetchPDFWithCache } from "@/lib/pdf-cache";
 
-type PdfJsModule = typeof import("pdfjs-dist/legacy/build/pdf.mjs");
+type PdfJsModule = typeof import("pdfjs-dist/build/pdf.mjs");
 type PdfDocumentProxy = Awaited<ReturnType<PdfJsModule["getDocument"]>["promise"]>;
 
 let pdfJsModulePromise: Promise<PdfJsModule> | null = null;
@@ -64,10 +64,10 @@ async function loadPdfJs(): Promise<PdfJsModule> {
   ensurePdfPromiseCompatibility();
 
   if (!pdfJsModulePromise) {
-    pdfJsModulePromise = import("pdfjs-dist/legacy/build/pdf.mjs").then(
+    pdfJsModulePromise = import("pdfjs-dist/build/pdf.mjs").then(
       (pdfjsLib) => {
         pdfjsLib.GlobalWorkerOptions.workerSrc =
-          `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/legacy/build/pdf.worker.mjs`;
+          `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.mjs`;
         return pdfjsLib;
       }
     );
@@ -127,9 +127,10 @@ export function PDFViewer({ pdfUrl, title, magazineId }: PDFViewerProps) {
 
         console.log('[v0] PDF data loaded, initializing document...');
 
-        // Load the compatibility build only after Safari promise polyfills are
-        // installed. A static import of current PDF.js can crash older iOS
-        // Safari before this component has a chance to render an error state.
+        // Load the standard renderer only after Safari promise polyfills are
+        // installed. Keeping the modern renderer preserves PDF fidelity while
+        // still avoiding the older-iOS Promise.try() crash caused by a static
+        // import before the compatibility shims run.
         const pdfjsLib = await loadPdfJs();
 
         // Load PDF from array buffer
