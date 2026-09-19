@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import * as pdfjsLib from "pdfjs-dist";
 import {
   ChevronLeft,
   ChevronRight,
@@ -19,8 +18,63 @@ import {
 import { Button } from "@/components/ui/button";
 import { fetchPDFWithCache } from "@/lib/pdf-cache";
 
-// Configure PDF.js worker - match the library version
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.mjs`;
+type PdfJsModule = typeof import("pdfjs-dist/legacy/build/pdf.mjs");
+type PdfDocumentProxy = Awaited<ReturnType<PdfJsModule["getDocument"]>["promise"]>;
+
+let pdfJsModulePromise: Promise<PdfJsModule> | null = null;
+
+function ensurePdfPromiseCompatibility() {
+  const PromiseCompat = Promise as typeof Promise & {
+    try?: (
+      callback: (...args: unknown[]) => unknown,
+      ...args: unknown[]
+    ) => Promise<unknown>;
+    withResolvers?: <T>() => {
+      promise: Promise<T>;
+      resolve: (value: T | PromiseLike<T>) => void;
+      reject: (reason?: unknown) => void;
+    };
+  };
+
+  if (!PromiseCompat.withResolvers) {
+    PromiseCompat.withResolvers = <T,>() => {
+      let resolve!: (value: T | PromiseLike<T>) => void;
+      let reject!: (reason?: unknown) => void;
+      const promise = new Promise<T>((promiseResolve, promiseReject) => {
+        resolve = promiseResolve;
+        reject = promiseReject;
+      });
+      return { promise, resolve, reject };
+    };
+  }
+
+  if (!PromiseCompat.try) {
+    PromiseCompat.try = (callback, ...args) =>
+      new Promise((resolve, reject) => {
+        try {
+          resolve(callback(...args));
+        } catch (error) {
+          reject(error);
+        }
+      });
+  }
+}
+
+async function loadPdfJs(): Promise<PdfJsModule> {
+  ensurePdfPromiseCompatibility();
+
+  if (!pdfJsModulePromise) {
+    pdfJsModulePromise = import("pdfjs-dist/legacy/build/pdf.mjs").then(
+      (pdfjsLib) => {
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+          `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/legacy/build/pdf.worker.mjs`;
+        return pdfjsLib;
+      }
+    );
+  }
+
+  return pdfJsModulePromise;
+}
 
 interface PDFViewerProps {
   pdfUrl: string;
@@ -33,7 +87,7 @@ interface PageCache {
 }
 
 export function PDFViewer({ pdfUrl, title, magazineId }: PDFViewerProps) {
-  const [pdfDoc, setPdfDoc] = useState<pdfjsLib.PDFDocumentProxy | null>(null);
+  const [pdfDoc, setPdfDoc] = useState<PdfDocumentProxy | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [scale, setScale] = useState(1);
@@ -73,6 +127,11 @@ export function PDFViewer({ pdfUrl, title, magazineId }: PDFViewerProps) {
 
         console.log('[v0] PDF data loaded, initializing document...');
 
+        // Load the compatibility build only after Safari promise polyfills are
+        // installed. A static import of current PDF.js can crash older iOS
+        // Safari before this component has a chance to render an error state.
+        const pdfjsLib = await loadPdfJs();
+
         // Load PDF from array buffer
         const loadingTask = pdfjsLib.getDocument({
           data: arrayBuffer,
@@ -100,7 +159,7 @@ export function PDFViewer({ pdfUrl, title, magazineId }: PDFViewerProps) {
 
     return () => {
       Object.values(pageCache.current).forEach((bitmap) => {
-        if (bitmap) bitmap.close();
+        if (bitmap && typeof bitmap.close === "function") bitmap.close();
       });
       pageCache.current = {};
     };
@@ -142,7 +201,13 @@ export function PDFViewer({ pdfUrl, title, magazineId }: PDFViewerProps) {
   // Preload adjacent pages
   const preloadPages = useCallback(
     async (currentPageNum: number) => {
-      if (!pdfDoc) return;
+      if (
+        !pdfDoc ||
+        typeof OffscreenCanvas === "undefined" ||
+        typeof createImageBitmap === "undefined"
+      ) {
+        return;
+      }
 
       const pagesToPreload = [currentPageNum - 1, currentPageNum + 1].filter(
         (p) => p >= 1 && p <= totalPages && !pageCache.current[p]
@@ -224,11 +289,10 @@ export function PDFViewer({ pdfUrl, title, magazineId }: PDFViewerProps) {
     if (!containerRef.current) return;
 
     if (!document.fullscreenElement) {
-      containerRef.current.requestFullscreen();
-      setIsFullscreen(true);
-    } else {
-      document.exitFullscreen();
-      setIsFullscreen(false);
+      if (typeof containerRef.current.requestFullscreen !== "function") return;
+      void containerRef.current.requestFullscreen();
+    } else if (typeof document.exitFullscreen === "function") {
+      void document.exitFullscreen();
     }
   };
 
