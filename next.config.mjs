@@ -12,7 +12,7 @@ const contentSecurityPolicy = [
   "connect-src 'self' https: wss:",
   "frame-src 'self' https:",
   "media-src 'self' data: blob: https:",
-  "worker-src 'self' blob:",
+  "worker-src 'self' blob: https://unpkg.com",
   "manifest-src 'self'",
   "upgrade-insecure-requests",
 ].join('; ')
