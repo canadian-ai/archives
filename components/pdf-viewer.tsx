@@ -21,6 +21,7 @@ import { fetchPDFWithCache } from "@/lib/pdf-cache";
 type PdfJsModule = typeof import("pdfjs-dist/build/pdf.mjs");
 type PdfDocumentProxy = Awaited<ReturnType<PdfJsModule["getDocument"]>["promise"]>;
 
+const PDFJS_RENDERER_VERSION = "4.10.38";
 let pdfJsModulePromise: Promise<PdfJsModule> | null = null;
 
 function ensurePdfPromiseCompatibility() {
@@ -64,13 +65,18 @@ async function loadPdfJs(): Promise<PdfJsModule> {
   ensurePdfPromiseCompatibility();
 
   if (!pdfJsModulePromise) {
-    pdfJsModulePromise = import("pdfjs-dist/build/pdf.mjs").then(
-      (pdfjsLib) => {
-        pdfjsLib.GlobalWorkerOptions.workerSrc =
-          `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.mjs`;
-        return pdfjsLib;
-      }
-    );
+    const importFromUrl = new Function(
+      "url",
+      "return import(url)"
+    ) as (url: string) => Promise<PdfJsModule>;
+
+    pdfJsModulePromise = importFromUrl(
+      `https://unpkg.com/pdfjs-dist@${PDFJS_RENDERER_VERSION}/build/pdf.mjs`
+    ).then((pdfjsLib) => {
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        `https://unpkg.com/pdfjs-dist@${PDFJS_RENDERER_VERSION}/build/pdf.worker.mjs`;
+      return pdfjsLib;
+    });
   }
 
   return pdfJsModulePromise;
@@ -127,16 +133,15 @@ export function PDFViewer({ pdfUrl, title, magazineId }: PDFViewerProps) {
 
         console.log('[v0] PDF data loaded, initializing document...');
 
-        // Load the standard renderer only after Safari promise polyfills are
-        // installed. Keeping the modern renderer preserves PDF fidelity while
-        // still avoiding the older-iOS Promise.try() crash caused by a static
-        // import before the compatibility shims run.
+        // Pin the renderer to PDF.js 4.10.38, which preserves fidelity for
+        // these historical scans. Load it only after Safari Promise shims so
+        // older iOS still avoids the client-side Promise.try() crash.
         const pdfjsLib = await loadPdfJs();
 
         // Load PDF from array buffer
         const loadingTask = pdfjsLib.getDocument({
           data: arrayBuffer,
-          cMapUrl: `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/cmaps/`,
+          cMapUrl: `https://unpkg.com/pdfjs-dist@${PDFJS_RENDERER_VERSION}/cmaps/`,
           cMapPacked: true,
         });
 
