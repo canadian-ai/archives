@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Header } from "@/components/header";
-import { Hero } from "@/components/hero";
 import { MagazineGrid } from "@/components/magazine-grid";
 import { CaiMark } from "@/components/cai-mark";
 
@@ -39,7 +38,7 @@ export default function HomePage() {
       <Header />
 
       <main>
-        <Hero />
+        <MagazineGrid />
 
         <section id="timeline" className="border-b border-foreground/10">
           <div className="mx-auto grid max-w-[1500px] lg:grid-cols-[0.72fr_1.28fr]">
@@ -77,8 +76,6 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-
-        <MagazineGrid />
 
         <section className="bg-foreground text-background">
           <div className="mx-auto grid max-w-[1500px] lg:grid-cols-2">

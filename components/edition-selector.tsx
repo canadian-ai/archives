@@ -15,7 +15,7 @@ type EditionSelectorProps = {
 };
 
 export function EditionSelector({ magazines, className }: EditionSelectorProps) {
-  const [activeId, setActiveId] = useState<string | null>(magazines[0]?.id ?? null);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
 
   useEffect(() => {
@@ -24,8 +24,8 @@ export function EditionSelector({ magazines, className }: EditionSelectorProps) 
       return;
     }
 
-    if (!magazines.some((magazine) => magazine.id === activeId)) {
-      setActiveId(magazines[0].id);
+    if (activeId && !magazines.some((magazine) => magazine.id === activeId)) {
+      setActiveId(null);
     }
   }, [activeId, magazines]);
 
@@ -48,9 +48,9 @@ export function EditionSelector({ magazines, className }: EditionSelectorProps) 
                 tabIndex={0}
                 aria-expanded={isActive}
                 aria-label={`Select volume ${magazine.volume}, ${magazine.date}`}
-                initial={reduceMotion ? false : { width: "4.75rem", opacity: 0 }}
+                initial={reduceMotion ? false : { width: "5.5rem", opacity: 0 }}
                 animate={{
-                  width: isActive ? "clamp(16.5rem, 72vw, 24rem)" : "4.75rem",
+                  width: isActive ? "clamp(20rem, 58vw, 34rem)" : "5.5rem",
                   opacity: 1,
                 }}
                 transition={{
@@ -59,7 +59,7 @@ export function EditionSelector({ magazines, className }: EditionSelectorProps) 
                   delay: reduceMotion ? 0 : Math.min(index * 0.015, 0.2),
                 }}
                 onClick={(event) => {
-                  setActiveId(magazine.id);
+                  setActiveId((current) => (current === magazine.id ? null : magazine.id));
                   event.currentTarget.scrollIntoView({
                     behavior: reduceMotion ? "auto" : "smooth",
                     block: "nearest",
@@ -67,15 +67,17 @@ export function EditionSelector({ magazines, className }: EditionSelectorProps) 
                   });
                 }}
                 onHoverStart={() => setActiveId(magazine.id)}
+                onHoverEnd={() => setActiveId(null)}
                 onFocus={() => setActiveId(magazine.id)}
+                onBlur={() => setActiveId(null)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") {
                     event.preventDefault();
-                    setActiveId(magazine.id);
+                    setActiveId((current) => (current === magazine.id ? null : magazine.id));
                   }
                 }}
                 className={cn(
-                  "group relative h-[22rem] shrink-0 cursor-pointer overflow-hidden border bg-card outline-none sm:h-[26rem]",
+                  "group relative h-[28rem] shrink-0 cursor-pointer overflow-hidden border bg-card outline-none sm:h-[34rem] lg:h-[38rem]",
                   isActive
                     ? "border-foreground/30 ring-1 ring-[var(--brand-emerald)]/30"
                     : "border-foreground/10 hover:border-foreground/25 focus-visible:border-[var(--brand-emerald)]",
@@ -101,7 +103,7 @@ export function EditionSelector({ magazines, className }: EditionSelectorProps) 
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 8 }}
                       transition={{ duration: reduceMotion ? 0 : 0.2, delay: reduceMotion ? 0 : 0.08 }}
-                      className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/20 to-transparent p-5 text-white sm:p-6"
+                      className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/20 to-transparent p-5 text-white sm:p-7"
                     >
                       <div className="mb-auto flex items-start justify-between gap-4">
                         <span className="border border-white/25 bg-black/20 px-2.5 py-1 font-mono text-[9px] font-semibold uppercase tracking-[0.16em] backdrop-blur-sm">
@@ -113,8 +115,8 @@ export function EditionSelector({ magazines, className }: EditionSelectorProps) 
                       </div>
 
                       <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/60">Canadian AI archive</p>
-                      <h3 className="mt-2 font-serif text-3xl leading-none tracking-[-0.03em] sm:text-4xl">{magazine.date}</h3>
-                      <p className="mt-3 max-w-[28ch] text-xs leading-5 text-white/70">
+                      <h3 className="mt-2 font-serif text-4xl leading-none tracking-[-0.03em] sm:text-5xl">{magazine.date}</h3>
+                      <p className="mt-3 max-w-[32ch] text-xs leading-5 text-white/70">
                         Open the original issue in the Canadian AI Archives reader.
                       </p>
 
