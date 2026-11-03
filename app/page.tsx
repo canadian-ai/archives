@@ -128,6 +128,9 @@ export default function HomePage() {
             <div>
               <p className="font-serif text-lg">Canadian AI Archives</p>
               <p className="mt-1 text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Canadian AI Solutions · Montréal</p>
+              <p className="mt-3 text-xs text-muted-foreground">Open source from Canadian AI.</p>
+              <p className="text-xs text-muted-foreground/80">Built in Montréal by Canadian AI.</p>
+              <a href="https://canadian-ai.ca" className="mt-2 inline-block text-xs text-muted-foreground underline-offset-4 hover:underline">Canadian AI</a>
             </div>
           </div>
           <p className="max-w-2xl text-xs leading-5 text-muted-foreground lg:text-right">
