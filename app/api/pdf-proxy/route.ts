@@ -16,27 +16,56 @@ export async function GET(request: Request) {
       source.username || source.password || (source.port && source.port !== "443")) {
     return new Response("PDF source not allowed", { status: 403 });
   }
+
   try {
     const upstream = await fetch(source, {
       redirect: "manual",
       signal: AbortSignal.timeout(10000),
-      headers: { "Accept": "application/pdf" },
+      headers: { Accept: "application/pdf" },
     });
     if (!upstream.ok) {
+      await upstream.body?.cancel();
       return new Response("PDF source unavailable", { status: 502 });
     }
-    const length = Number(upstream.headers.get("content-length"));
-    if (length > MAX_PDF_BYTES) return new Response("PDF too large", { status: 413 });
+    const declared = upstream.headers.get("content-length");
+    if (declared !== null && (!/^\d+$/.test(declared) || Number(declared) > MAX_PDF_BYTES)) {
+      await upstream.body?.cancel();
+      return new Response("PDF too large", { status: 413 });
+    }
     const type = upstream.headers.get("content-type")?.toLowerCase() ?? "";
     if (!type.includes("application/pdf") && !source.pathname.toLowerCase().endsWith(".pdf")) {
+      await upstream.body?.cancel();
       return new Response("Not a PDF", { status: 415 });
     }
-    const body = await upstream.arrayBuffer();
-    if (body.byteLength > MAX_PDF_BYTES || body.byteLength < 5) {
-      return new Response("Invalid PDF size", { status: 413 });
+    if (!upstream.body) return new Response("Empty PDF response", { status: 502 });
+
+    const reader = upstream.body.getReader();
+    const chunks: Uint8Array[] = [];
+    let size = 0;
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        size += value.byteLength;
+        if (size > MAX_PDF_BYTES) {
+          await reader.cancel();
+          return new Response("PDF too large", { status: 413 });
+        }
+        chunks.push(value);
+      }
+    } finally {
+      reader.releaseLock();
     }
-    const signature = new TextDecoder().decode(body.slice(0, 5));
-    if (signature !== "%PDF-") return new Response("Invalid PDF", { status: 415 });
+    if (size < 5) return new Response("Invalid PDF size", { status: 415 });
+    const body = new Uint8Array(size);
+    let offset = 0;
+    for (const chunk of chunks) {
+      body.set(chunk, offset);
+      offset += chunk.byteLength;
+    }
+    if (new TextDecoder().decode(body.subarray(0, 5)) !== "%PDF-") {
+      return new Response("Invalid PDF", { status: 415 });
+    }
     return new Response(body, {
       headers: {
         "Content-Type": "application/pdf",
