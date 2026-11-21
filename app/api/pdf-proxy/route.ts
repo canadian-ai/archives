@@ -1,36 +1,80 @@
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const url = searchParams.get('url');
+const ALLOWED_HOST = "caiac.ca";
+const MAX_PDF_BYTES = 25 * 1024 * 1024;
 
-  if (!url) {
-    return new Response('Missing URL parameter', { status: 400 });
+export async function GET(request: Request) {
+  const raw = new URL(request.url).searchParams.get("url");
+  if (!raw) return new Response("Missing URL parameter", { status: 400 });
+
+  let source: URL;
+  try {
+    source = new URL(raw);
+  } catch {
+    return new Response("Invalid URL", { status: 400 });
+  }
+  if (source.protocol !== "https:" ||
+      (source.hostname !== ALLOWED_HOST && !source.hostname.endsWith(`.${ALLOWED_HOST}`)) ||
+      source.username || source.password || (source.port && source.port !== "443")) {
+    return new Response("PDF source not allowed", { status: 403 });
   }
 
   try {
-    // Fetch the PDF from the external source
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; CanadianAIArchives/1.0)',
-      },
+    const upstream = await fetch(source, {
+      redirect: "manual",
+      signal: AbortSignal.timeout(10000),
+      headers: { Accept: "application/pdf" },
     });
-
-    if (!response.ok) {
-      return new Response('Failed to fetch PDF', { status: response.status });
+    if (!upstream.ok) {
+      await upstream.body?.cancel();
+      return new Response("PDF source unavailable", { status: 502 });
     }
+    const declared = upstream.headers.get("content-length");
+    if (declared !== null && (!/^\d+$/.test(declared) || Number(declared) > MAX_PDF_BYTES)) {
+      await upstream.body?.cancel();
+      return new Response("PDF too large", { status: 413 });
+    }
+    const type = upstream.headers.get("content-type")?.toLowerCase() ?? "";
+    if (!type.includes("application/pdf") && !source.pathname.toLowerCase().endsWith(".pdf")) {
+      await upstream.body?.cancel();
+      return new Response("Not a PDF", { status: 415 });
+    }
+    if (!upstream.body) return new Response("Empty PDF response", { status: 502 });
 
-    // Get the PDF data
-    const pdfData = await response.arrayBuffer();
-
-    // Return the PDF with proper headers
-    return new Response(pdfData, {
+    const reader = upstream.body.getReader();
+    const chunks: Uint8Array[] = [];
+    let size = 0;
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        size += value.byteLength;
+        if (size > MAX_PDF_BYTES) {
+          await reader.cancel();
+          return new Response("PDF too large", { status: 413 });
+        }
+        chunks.push(value);
+      }
+    } finally {
+      reader.releaseLock();
+    }
+    if (size < 5) return new Response("Invalid PDF size", { status: 415 });
+    const body = new Uint8Array(size);
+    let offset = 0;
+    for (const chunk of chunks) {
+      body.set(chunk, offset);
+      offset += chunk.byteLength;
+    }
+    if (new TextDecoder().decode(body.subarray(0, 5)) !== "%PDF-") {
+      return new Response("Invalid PDF", { status: 415 });
+    }
+    return new Response(body, {
       headers: {
-        'Content-Type': 'application/pdf',
-        'Cache-Control': 'public, max-age=31536000, immutable',
-        'Access-Control-Allow-Origin': '*',
+        "Content-Type": "application/pdf",
+        "Content-Disposition": "inline",
+        "X-Content-Type-Options": "nosniff",
+        "Cache-Control": "public, max-age=3600",
       },
     });
-  } catch (error) {
-    console.error('Error proxying PDF:', error);
-    return new Response('Error fetching PDF', { status: 500 });
+  } catch {
+    return new Response("PDF fetch failed", { status: 502 });
   }
 }
